@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+{% block body %}
+<div class="container-api">
+<h3>Please Login:</h3>
+<form action="/user/logon" method="post">
+{% csrf_token %}
+{{ formmsg }}
+{{ form.as_p }}
+<input type="submit" value="Submit" /> 
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{
+    'server':{
+        'name':'server-1',
+        'imageRef':'87589e22-fc26-4ab0-8b15-948823b00a5e',
+        'flavorRef':'1'
+    },
+    'os:scheduler_hints':{
+        'hypervisor':{
+            "id":2,
+            "hypervisor_hostname":"KVMCompute"
+        },
+        'near':'a0cf03a5-d921-4877-bb5c-86d26cf818e1'
+    }
+}

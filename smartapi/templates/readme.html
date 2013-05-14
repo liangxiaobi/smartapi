@@ -1,0 +1,305 @@
+<h1>SmartAPI</h1>
+<p>本程序为智网科技云平台提供底层API接口，供SmartCenter或者SmartCloud调用.</p>
+<p>作者：梁肖碧 xbliang@zhiwang.com.cn</p>
+<p>版本 : 1.0</p>
+<h2>功能说明:</h2>
+<h2>镜像：</h2>
+<ul>
+<li>获取镜像列表LIST</li>
+<li>获取单个镜像信息GET</li>
+</ul>
+<h2>主机模板：</h2>
+<ul>
+<li>获取现有模板列表LIST</li>
+<li>获取单个模板信息GET</li>
+<li>创建新模板CREATE</li>
+<li>修改模板MODIFY</li>
+<li>删除模板DELETE</li>
+</ul>
+<h2>主机操作：</h2>
+<ul>
+<li>获取现有主机列表</li>
+<li>创建新主机</li>
+<li>修改主机属性</li>
+<li>删除主机</li>
+</ul>
+<h2>主机扩展操作：</h2>
+<ul>
+<li>分配公网IP</li>
+<li>状态操作:重启、关机、</li>
+<li>VNC查看</li>
+<li>创建快照</li>
+</ul>
+<h2>常用工具</h2>
+<h3>JSON格式化</h3>
+<pre><code>http://www.cnblogs.com/biangbiang/archive/2013/01/11/2856431.html
+</code></pre>
+<h3>Java REST Client</h3>
+<pre><code>http://rest-client.googlecode.com/
+</code></pre>
+<h3>Groovy RESTCLIENT (groovyx.net.http.RESTClient)</h3>
+<pre><code>http://groovy.codehaus.org/modules/http-builder/doc/rest.html
+</code></pre>
+<h3>HttpClient入门</h3>
+<pre><code>http://www.ibm.com/developerworks/cn/opensource/os-httpclient/
+http://www.ibm.com/developerworks/cn/aix/library/au-aix-systemsdirector/section2.html
+</code></pre>
+<h2>接口规范</h2>
+<h3>通用</h3>
+<ul>
+<li>接口采用http协议访问</li>
+<li>访问方法有GET、POST、PUT、DELETE四种分别对应查询、创建、修改、删除四种操作</li>
+<li>URL地址: http://hostname:port/api/</li>
+<li>统一采用POST方式发送数据</li>
+<li>发送和接收数据采用JSON格式</li>
+</ul>
+<p>Request:发送的数据格式,第一层数据均为必填项，无值时使用空字符串""表示</p>
+<pre><code>    {
+        "token":"string",
+        "tenantid":"string",
+        "biztype":"{auth|images|flavors|servers|security}",
+        "action":"{create|retrieve|update|delete}",
+        "bizdata":{
+            "param1":"",
+            "param2":""
+        }
+    }
+</code></pre>
+<ul>
+<li>token:认证后获得的令牌</li>
+<li>tenantid:项目id,由管理员指定</li>
+<li>biztype:业务类型{auth|images|flavors|servers|security}</li>
+<li>action:{create|retrieve|update|delete}操作类型</li>
+<li>bizdata:业务数据,参考下面各业务细节<br />
+</li>
+</ul>
+<p>Response:返回的数据格式</p>
+<pre><code>    {
+        "result" : int, # 返回值代码，参见http返回值代码表(由1001-1999,代码后三位为http代码值的参考http代码，其它为自定义代码)
+        "message" : "string", #返回值描述, 上面code的文字描述
+        "data" : { 
+                    "param1":"",
+                    "param2":"",
+                    ...
+                 } #业务数据,参考下面各业务细节
+      }
+</code></pre>
+<h2>认证</h2>
+<p>首先，登录smartapi的前提是，管理员要分配给你一个用户名、密码、及项目ID
+类似这样:</p>
+<blockquote>
+<p>用户名:lion
+密码:password
+项目ID:aaab5b612c374ce8abbecbb9f20728cc</p>
+</blockquote>
+<h4>说明</h4>
+<pre><code>- 参数 : 
+    {
+        "token" : "", 
+        "tenantid" : "60bb1d7ea05b4d0aaffb90352cd6576c",
+        "biztype":"auth",
+        "action":"retrieve",
+        "bizdata":{
+                    "username":"admin", 
+                    "password":"password"
+                    }
+    }
+   #biztype=auth时此项可以为空
+- 返回值 :
+    * {
+        "result" : int, # 0,
+        "message" : "string", #返回值描述, 上面code的文字描述
+        "data" : { 
+                    "token":"", #token
+                    "expire":"", #过期时间
+                 } 
+      }
+- 范例 :
+</code></pre>
+<h2>镜像</h2>
+<h3>LIST</h3>
+<pre><code>    -Request:
+     {
+        "token" : "3402c4614e9e457d9ec2daf72337ac31", 
+        "tenantid" : "60bb1d7ea05b4d0aaffb90352cd6576c",
+        "biztype":"images",
+        "action":"retrieve",
+        "bizdata":{}
+    }
+    -Response:
+     {
+        "result" : int, 
+        "message" : "string", 
+        "data" : {
+                  "images" : [ {
+                    "name" : "xxx1",
+                    "container_format" : "ovf",
+                    "disk_format" : "qcow2",
+                    "checksum" : "dd50928018a9d921aa432f97aed8959b",
+                    "id" : "59b23f20-15bb-4cfc-bf10-5367ecd59d26",
+                    "size" : 2003566592
+                  }, {
+                    "name" : "ununtu.img",
+                    "container_format" : "ovf",
+                    "disk_format" : "qcow2",
+                    "checksum" : "7bd2c4b925faad477a4258ec98fa7f8e",
+                    "id" : "e8356980-bcc9-455d-83dd-c7a82f75963f",
+                    "size" : 233832448
+                  } ]
+                }
+      }
+</code></pre>
+<h2>模板</h2>
+<p>获取现有模板列表LIST</p>
+<p>Request:</p>
+<pre><code>{
+    "token" : "3402c4614e9e457d9ec2daf72337ac31", 
+    "tenantid" : "60bb1d7ea05b4d0aaffb90352cd6576c",
+    "biztype":"flavors",
+    "action":"retrieve",
+    "bizdata":{}
+}
+</code></pre>
+<p>Response:</p>
+<pre><code>{
+    "result" : int, 
+    "message" : "string", 
+    "data" : {
+              "flavors" : [ {
+                "id" : "1",
+                "links" : [ {
+                  "href" : "http://192.168.10.2:8774/v2/60bb1d7ea05b4d0aaffb90352cd6576c/flavors/1",
+                  "rel" : "self"
+                }, {
+                  "href" : "http://192.168.10.2:8774/60bb1d7ea05b4d0aaffb90352cd6576c/flavors/1",
+                  "rel" : "bookmark"
+                } ],
+                "name" : "m1.tiny"
+              }, {
+                "id" : "2",
+                "links" : [ {
+                  "href" : "http://192.168.10.2:8774/v2/60bb1d7ea05b4d0aaffb90352cd6576c/flavors/2",
+                  "rel" : "self"
+                }, {
+                  "href" : "http://192.168.10.2:8774/60bb1d7ea05b4d0aaffb90352cd6576c/flavors/2",
+                  "rel" : "bookmark"
+                } ],
+                "name" : "m1.small"
+              }]
+            }
+}
+</code></pre>
+<h1>主机操作</h1>
+<h2>创建主机</h2>
+<h3>Request</h3>
+<pre><code>{
+    "token":"3402c4614e9e457d9ec2daf72337ac31",
+    "tenantid":"60bb1d7ea05b4d0aaffb90352cd6576c",
+    "biztype":"servers",
+    "action":"create",
+    "bizdata":{
+        "flavorRef":"2",
+        "imageRef":"e40adcfe-5226-44e1-a97b-d57f17dcf93e",
+        "metadata":{
+            "My Server Name":"Apache1"
+        },
+        "name":"new-server-test",
+        "personality":[
+
+        ]
+    }
+}
+</code></pre>
+<p><em>name:主机名称
+</em>imageRef:系统镜像id
+*flavorRef:模板id</p>
+<h3>Response</h3>
+<pre><code>{
+    "message":"Create server success.",
+    "data":{
+        "server":{
+            "OS-DCF:diskConfig":"MANUAL",
+            "id":"3500475d-09e4-43f4-a496-2eb6cb331874",
+            "links":[
+                {
+                    "href":"http://192.168.10.2:8774/v2/60bb1d7ea05b4d0aaffb90352cd6576c/servers/3500475d-09e4-43f4-a496-2eb6cb331874",
+                    "rel":"self"
+                },
+                {
+                    "href":"http://192.168.10.2:8774/60bb1d7ea05b4d0aaffb90352cd6576c/servers/3500475d-09e4-43f4-a496-2eb6cb331874",
+                    "rel":"bookmark"
+                }
+            ],
+            "adminPass":"dX753xp2qkFi"
+        }
+    },
+    "result":1200
+}
+</code></pre>
+<h2>主机列表</h2>
+<h3>Request</h3>
+<pre><code>{
+    "token":"3402c4614e9e457d9ec2daf72337ac31",
+    "tenantid":"60bb1d7ea05b4d0aaffb90352cd6576c",
+    "biztype":"servers",
+    "action":"retrieve"
+</code></pre>
+<p>}</p>
+<h3>Response</h3>
+<pre><code>{
+</code></pre>
+<p>"message" : "Get Server list success.",
+  "data" : {
+    "servers" : [ {
+      "status" : "ACTIVE",
+      "vm_state" : "active",
+      "updated" : "2013-01-23T02:34:29Z",
+      "hostId" : "4f6133690cc2d6a695ea40c7b114b811a3da2dc52a51cfe872ceb1d3",
+      "user_id" : "cd5bde66bd5e48e0bb4f861fe77a23b3",
+      "addresses" : "192.0.0.2",
+      "created" : "2013-01-23T02:34:16Z",
+      "tenant_id" : "60bb1d7ea05b4d0aaffb90352cd6576c",
+      "imageid" : "e40adcfe-5226-44e1-a97b-d57f17dcf93e",
+      "instance_name" : "instance-0000001a",
+      "accessIPv4" : "",
+      "host" : "sns",
+      "power_state" : 1,
+      "flavorid" : "2",
+      "id" : "77e9036f-0b30-4116-a512-b56223744737",
+      "name" : "new-server-test"
+    } ]
+  },
+  "result" : 1200
+}</p>
+<h2>删除主机</h2>
+<h3>Request</h3>
+<pre><code>{
+    "token":"3402c4614e9e457d9ec2daf72337ac31",
+    "tenantid":"60bb1d7ea05b4d0aaffb90352cd6576c",
+    "biztype":"servers",
+    "action":"delete",
+    "bizdata":{
+        "serverid": "10c1050e-50cf-4ad8-850a-c12f3d9b9409"
+    }
+}
+</code></pre>
+<h3>Response</h3>
+<pre><code>*{
+  "message" : "Sever is deleted.",
+  "data" : {
+    "message" : "No content",
+    "code" : 204
+  },
+  "result" : 1204
+}
+*{
+  "message" : "Server Not Found.",
+  "data" : {
+    "itemNotFound" : {
+      "message" : "The resource could not be found.",
+      "code" : 404
+    }
+  },
+  "result" : 1404
+}
+</code></pre>

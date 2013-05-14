@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource>
+	<uuid>{{uuid}}</uuid>
+	<cpu>{{vcpu}}</cpu>
+	<mem>{{mem}}</mem>
+	<disk>{{disk}}</disk>
+	<netin>{{netin}}</netin>
+	<netout>{{netout}}</netout>
+</resource>

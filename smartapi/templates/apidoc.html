@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% block title %}Smart API{% endblock%} 
+
+{% load static from staticfiles %}
+{% block script %}
+<script type="text/javascript" src="{% static 'js/apidoc.js' %}"></script>
+	{% endblock %} 
+	
+	{% block body %}
+
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span> 
+				<span class="icon-bar"></span>
+			</button>
+			<a class="brand" href="#">Smart API </a>
+			<div class="nav-collapse collapse">
+				<p class="navbar-text pull-right">
+				    当前用户: {{request.COOKIES.sess_user}} @ {{request.COOKIES.sess_openstack_url}} 
+				    TeantID: {{request.COOKIES.sess_tenant_id}} Token: {{request.COOKIES.sess_token}} 
+				    过期时间: {{request.COOKIES.sess_token_expires}}
+				     ( <a href="/user/logout">注销</a> )
+				</p>
+				<ul class="nav">
+					<li class="active"><a href="/apidoc/">Home</a></li>
+					{% if res %}
+					<li><a href="">{{ res.service}}</a></li>
+					{% endif %}
+					<li><a href="#about"></a></li>
+					<li><a href="#contact"></a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+
+<div class="container-api">
+	<div class="row-fluid">
+		<div class="span3">
+			<div class="well sidebar-nav">
+				<ul class="nav nav-list" id="apipaths">
+					<li class="nav-header">ＡＰＩ 路径 <u><i>(点Home显示全部)</i></u></li> 
+					{% for res_ in resources %}
+					<li id="{{ res_ }}"
+					{% if res_.id == res.id %}
+					class="active"
+					{% endif %}
+					>
+					
+					<a href="/apidoc/{{res_.id}}/">{{res_.id}} {{ res_.path }} </a></li>
+					{% empty %}
+					<li>no record.</li> 
+					{% endfor %}
+				</ul>
+			</div>
+			<!--/.well -->
+		</div>
+		<!--/span-->
+		<div class="span9">
+			{% if not res %}
+			<div id="homeContainer">
+				<div class="hero-unit">
+					<h1>Smart API</h1>
+					<p>一组由智慧云提供的可以对后端云计算资源进行访问控制的接口规范</p>
+				</div>
+				<div class="row-fluid">
+					<div class="span6">
+						<h3>RESTful 架构</h3>
+						<p>
+							简单、可扩展、有效、安全、可靠。<br> 通过 HTTP 直接传输数据。
+						</p>
+						<p>
+							<a class="btn" href="http://baike.baidu.com/view/5798116.htm"
+								target='_blank'>了解RESTful &raquo;</a>
+						</p>
+					</div>
+					<!--/span-->
+					<div class="span6">
+						<h3>常用工具</h3>
+						<p>
+
+							JSON格式化:<br /> <a
+								href="http://www.cnblogs.com/biangbiang/archive/2013/01/11/2856431.html">http://www.cnblogs.com/biangbiang/archive/2013/01/11/2856431.html</a>
+							<br /> <br /> Java REST Client:<br /> <a
+								href="http://rest-client.googlecode.com/">http://rest-client.googlecode.com/</a>
+
+						</p>
+					</div>
+					<!--/span-->
+				</div>
+				<!--/row-->
+				<div class="row-fluid">
+				<div class="span6">
+				<h3>使用指南</h3>
+				<li>API服务的地址前缀: http://{{ request.META.HTTP_HOST}}/api</li>
+				<li>所有"请求格式"和"响应格式"中数据部分均为示例参考数据，以服务器实际返回值为准</li>
+				<li>注意JSON对象不能使用单引号
+				
+				</li>
+				</div>
+				<div class="span6">
+				<h3>HTTP状态码:</h3>
+<pre>
+200 - generic successful response, expect a body
+
+201 - entity created, expect a body and a Location header
+
+204 - successful response without body
+
+301 - redirection
+
+400 - invalid request (syntax, value, etc)
+
+401 - unauthenticated client
+
+403 - authenticated client unable to perform action
+
+409 - that action is impossible due to some (possibly permanent) circumstance
+
+415 - unsupported media type
+                </pre>
+				</div>
+				</div>
+			</div>
+			{% else %}
+			<div id="apiContainer">
+				<div class="row-fluid">
+					<div class="span9">
+						<h3>{{res.id}} {{ res.path }}</h3>
+						[{{ res.service }}]  {{ res.service.host }}:{{ res.service.port }} 版本：{{ res.service.version }}
+
+					</div>
+					<div class="span9">
+					API方法列表:
+					<ul>
+					{% for method in methods %}
+					   <li><a href="#{{method.id}}">{{method.id}} {{ method.description }}</a></li>
+					{% endfor%}
+					</ul>
+					</div>
+
+				</div>
+				{% for method in methods %}
+				<a name="{{ method.id}}"></a>
+				<div class="row-fluid">
+				<hr>
+				<h4 >{{method.id}} {{ method.description}}</h4>
+				
+				</div>
+				<div class="row-fluid">
+				    
+					<div class="span6">
+					   
+						<b>{{ method.method}}</b> 请求格式：
+						<pre>{{ method.req}}
+                        </pre>
+					</div>
+					<div class="span6" >
+						响应格式：
+						<pre class='pre-scrollable'>{{ method.resp}}</pre>
+					</div>
+				</div>
+                {% endfor %}
+                {% if errors %}
+                <h4>错误处理：</h4>
+                <blockquote class="row-fluid">
+                {% for error in errors %}
+                
+                
+                <h6 >{{ error.description}}</h6>
+                    <pre class='pre-scrollable'>{{ error.resp}}</pre>
+                    解决方案：{{ error.solution }}
+                
+                {% endfor %}
+                </blockquote>
+				{% endif %}
+			</div>
+			{% endif %}
+	</div>
+		<!--/span-->
+	</div>
+	<!--/row-->
+
+
+	<hr>
+		<p>&copy; 智网科技 2013</p>
+
+</div>
+{% endblock %}

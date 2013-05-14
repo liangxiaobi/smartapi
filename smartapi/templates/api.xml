@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rootDemo>
+	<headMessage>
+		<uniqueIdentifier></uniqueIdentifier>
+		<postType></postType>
+		<sendSuccessLabel></sendSuccessLabel>
+		<sendFailReason></sendFailReason>
+	</headMessage>
+	<vmware>
+		<vmwareId>{{serverid}}</vmwareId>
+		<cpuNumber></cpuNumber>
+		<hddRoom></hddRoom>
+		<romRoom></romRoom>
+		<netWork></netWork>
+		<systemId></systemId>
+		<ipAddress>{{ipaddress}}</ipAddress>
+		<state>active</state>
+		<success_failure>{{success_failure}}</success_failure>
+		<failReason>{{server.errormsg}}</failReason>
+		<distribute_begin_date>{{distribute_begin_date}}</distribute_begin_date>
+		<distribute_end_date>{{distribute_end_date}}</distribute_end_date>
+	</vmware>
+</rootDemo>
