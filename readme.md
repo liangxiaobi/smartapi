@@ -1,8 +1,8 @@
 SmartAPI
 =========
-本程序为智网科技云平台提供底层API接口，供SmartCenter或者SmartCloud调用.
+本程序为Openstack API 的一个发布，提供友好可读并可测试的ＡＰＩ开发环境
 
-作者：梁肖碧 <xbliang@zhiwang.com.cn>
+作者：梁肖碧 <11315889@qq.com>
 
 版本 : 1.0
 
